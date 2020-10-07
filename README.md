@@ -11,3 +11,4 @@ Program to Render interactive fractals
 | Z    | 10 less Iterations |
 | X    | 10 more Iterations |
 | +/-  | Zoom in/out        |
+| Q    | Toggle Realtime Render|
