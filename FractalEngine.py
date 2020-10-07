@@ -79,8 +79,8 @@ def main():
 			imaginaryStart = -1
 			imaginaryEnd = 1
 			zoom = 1
-			xoffset = 1
-			yoffset = 1
+			xoffset = 0
+			yoffset = 0
 			iterations = 80
 		elif key == b"z":
 			iterations -= 10
