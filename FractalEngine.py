@@ -19,13 +19,19 @@ def clear():
             print('\x1b[2J\x1b[H')
     except Exception:
         pass
-GREYSCALE = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
-def render(column, line, column_offset, render_set):
-	print(f"\033[{line};{column}H")
-	for pos, setchar in enumerate(render_set):
-		print(setchar, end="")
-		if pos % column_offset == 0:
-			print(f"\033[{line+pos//column_offset};{column}H")
+GRAYSCALE = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
+def render(realtime, column, line, column_offset, render_set, currentCol=0):
+	if realtime:
+		print(render_set, end="")
+		if currentCol % column_offset == 0:
+			print(f"\033[{line+currentCol//column_offset};{column}H")
+			
+	else:
+		print(f"\033[{line};{column}H")
+		for pos, setchar in enumerate(render_set):
+			print(setchar, end="")
+			if pos % column_offset == 0:
+				print(f"\033[{line+pos//column_offset};{column}H")
 def mandelbrot(c, iterations):
 	z = 0
 	n = 0
@@ -42,6 +48,7 @@ def np_mandelbrot(coord, offset, realStart, realEnd, imaginaryStart, imaginaryEn
 	except ZeroDivisionError: return 1
 	return color
 def main():
+	realTimeRender = False
 	iterations = 80
 	realStart = -2
 	realEnd = 1
@@ -56,10 +63,17 @@ def main():
 		height = int(os.get_terminal_size()[1])
 		xratio = abs(realEnd - realStart) / width
 		yratio = abs(imaginaryEnd - imaginaryStart) / height
-		for y in range(height):
-			for x in range(width):
-				RenderList.append(np_mandelbrot((x,y), (xoffset,yoffset), realStart, realEnd, imaginaryStart, imaginaryEnd, width, height, iterations, zoom))
-		render(0, 0, width, list(map(lambda k: GREYSCALE[int(k)], RenderList)))
+		if realTimeRender:
+			cnt = 0
+			for y in range(height):
+				for x in range(width):
+					cnt += 1
+					render(True, 0, 0, width, GRAYSCALE[np_mandelbrot((x,y), (xoffset,yoffset), realStart, realEnd, imaginaryStart, imaginaryEnd, width, height, iterations, zoom)], currentCol=(y*width+x))
+		else:
+			for y in range(height):
+				for x in range(width):
+					RenderList.append(np_mandelbrot((x,y), (xoffset,yoffset), realStart, realEnd, imaginaryStart, imaginaryEnd, width, height, iterations, zoom))
+			render(False, 0, 0, width, list(map(lambda k: GRAYSCALE[int(k)], RenderList)))
 		key = msvcrt.getch()
 		if key == b"+": 
 			zoom += zoom/2
@@ -74,18 +88,20 @@ def main():
 		elif key == b"s":
 			yoffset -= 0.25*zoom**-1
 		elif key == b"r":
+			iterations = 80
 			realStart = -2
 			realEnd = 1
 			imaginaryStart = -1
 			imaginaryEnd = 1
 			zoom = 1
 			xoffset = 0
-			yoffset = 0
-			iterations = 80
+			yoffset =  0
 		elif key == b"z":
 			iterations -= 10
 		elif key == b"x":
 			iterations +=10
+		elif key == b"q":
+			realTimeRender = not realTimeRender
 		elif key== b"\x03": 
 			sys.exit(0)
 		else:
