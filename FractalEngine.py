@@ -48,6 +48,7 @@ def np_mandelbrot(coord, offset, realStart, realEnd, imaginaryStart, imaginaryEn
 	except ZeroDivisionError: return 1
 	return color
 def main():
+	clear()
 	realTimeRender = False
 	iterations = 80
 	realStart = -2
