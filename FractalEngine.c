@@ -25,13 +25,20 @@ int pixel(double x, double y, unsigned long iter, register double complex z,int 
 }
 
 int main(){
-	for(register double start=0; start < 2; start+=0.001){ 
+	unsigned long count=1;
+	double inc = 0.001;
+	register double start;
+	while(1==1){
+		start += inc;
 		printf("\033[0;0H");
 		for(int y=0; y<=60;y++){
 			for(int x=0;x<=236;x++){
-				printf("%c", GRAYSCALE[pixel(x,y,85,start,60,236)]);
+				printf("%c", GRAYSCALE[pixel(x,y,150,start,60,236)]);
 			}
 			printf("\n");
+		}
+		if(start >= (2-abs(inc))){
+			inc *= -1;
 		}
 	}
 	return 0;
