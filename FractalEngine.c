@@ -26,7 +26,7 @@ int pixel(double x, double y, unsigned long iter, register double complex z,int 
 
 int main(){
 	unsigned long count=1;
-	double inc = 0.001;
+	double inc = 0.01;
 	register double start;
 	while(1==1){
 		start += inc;
@@ -38,6 +38,9 @@ int main(){
 			printf("\n");
 		}
 		if(start >= (2-abs(inc))){
+			inc *= -1;
+		}
+		if(start <= abs(inc)){
 			inc *= -1;
 		}
 	}
